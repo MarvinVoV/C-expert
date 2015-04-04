@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
+/** Write a string to the standard output **/
 int main(){
     char str[]="Here is some data\n";
     char msg[]="A write error has ocurred on file descriptor 1\n"; 
