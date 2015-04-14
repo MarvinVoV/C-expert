@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 void main(){
-	int i=10;
-	const int b=i;
-	printf("%d\n",b);
+    const char i='1';
+    int r=atoi(&i);
+    printf("%d %c\n",r,i);
 }
+
