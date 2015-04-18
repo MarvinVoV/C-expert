@@ -1,8 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
-void main(){
-    const char i='1';
-    int r=atoi(&i);
-    printf("%d %c\n",r,i);
+int main(){
+    char buf[512];
+    setbuf(stdin,buf);
+    printf("hello,world!\n");
+    return 0;
 }
 
