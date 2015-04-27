@@ -1,0 +1,8 @@
+total 32
+-rwxr-xr-x 1 root root 9120 Apr 27 14:06 a.out
+-rw-r--r-- 1 root root    0 Apr 27 14:08 foo
+-rw-r--r-- 1 root root  598 Apr 27 13:26 ftruncate1.c
+-rw-r--r-- 1 root root 1157 Apr 27 09:19 io1.c
+-rw-r--r-- 1 root root  919 Apr 27 11:26 io2.c
+-rw-r--r-- 1 root root  911 Apr 27 11:52 io3.c
+-rw-r--r-- 1 root root 1272 Apr 27 14:07 mmcp.c
