@@ -1,18 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <netinet/in.h>
 
-struct user{
-    char *name;
-    int age;
-};
+
 int main(void){
-    struct user u;
-    u.name="louis";
-    u.age=30;
-    printf("sizeof(u)=%ld\n",(long)sizeof(u));
-    printf("u.age=%d\n",u.age);
-    memset(&u,0,sizeof(u));
-    printf("u.age=%d\n",u.age);
+	struct sockaddr addr;
+	printf("%ld\n",sizeof(addr));
+	printf("%ld\n",sizeof(short));
     exit(0);
 }
