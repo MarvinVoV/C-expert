@@ -13,4 +13,23 @@
 #include <sys/signal.h>
 #include <errno.h>
 
+/* Error module */
+void err_sys(const char *,...);
 
+void err_msg(const char *,...);
+
+
+/* Socket module */
+int Accept(int, struct sockaddr *, socklen_t *);
+
+void Bind(int, const struct sockaddr *, socklen_t);
+
+void Connect(int, struct sockaddr *, socklen_t);
+
+void Listen(int, int);
+
+int Socket(int, int, int);
+
+ssize_t Recv(int, void *, size_t, int);
+
+void Send(int, const void *ptr, size_t nbytes, int);

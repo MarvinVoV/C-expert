@@ -13,7 +13,7 @@ void err_msg(const char *fmt, ...){
 	return;
 }
 
-void err_print(const char *fmt,va_list ap){
+static void err_print(const char *fmt,va_list ap){
 	va_start(ap);
 	vprintf(fm,ap);
 	va_end(ap);
