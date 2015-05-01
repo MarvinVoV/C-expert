@@ -33,3 +33,11 @@ int Socket(int, int, int);
 ssize_t Recv(int, void *, size_t, int);
 
 void Send(int, const void *ptr, size_t nbytes, int);
+
+
+/* IO module */
+ssize_t readn(int fd, void *buff, size_t nbytes);
+
+ssize_t writen(int fd, void *buff, size_t nbytes);
+
+ssize_t readline(int fd, void *buff, size_t maxlen);
