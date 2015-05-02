@@ -24,6 +24,10 @@
 #define LISTENQ 1024 /* 2nd argument to listen() */
 
 
+typedef void Sigfunc(int); /* for signal handlers */
+
+Sigfunc *Signal(int signo, Sigfunc *func); /* for signal() function */
+
 /* Error module */
 void err_sys(const char *,...);
 
@@ -73,6 +77,23 @@ void Fputs(const char *, FILE *);
 void Close(int);
 
 pid_t Fork();
+
+
+void Sigemptyset(sigset_t *);
+
+void Sigfillset(sigset_t *);
+
+void Sigfillset(sigset_t *);
+
+int Sigismember(const sigset_t *, int);
+
+void Sigaddset(sigset_t *, int);
+
+void Sigdelset(sigset_t *, int);
+
+void Sigpending(sigset_t *);
+
+void Sigprocmask(int, const sigset_t *, sigset_t *);
 
 
 #endif  /* __netcomplex_h */
