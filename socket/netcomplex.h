@@ -23,6 +23,9 @@
 #define SERV_PORT 9877 /* TCP and UDP */
 #define LISTENQ 1024 /* 2nd argument to listen() */
 
+#define max(a,b)    ((a) > (b) ? (a) : (b))
+#define min(a,b)    ((a) < (b) ? (a) : (b));
+
 
 typedef void Sigfunc(int); /* for signal handlers */
 
@@ -48,6 +51,8 @@ int Socket(int, int, int);
 ssize_t Recv(int, void *, size_t, int);
 
 void Send(int, const void *ptr, size_t nbytes, int);
+
+int Select(int, fd_set *, fd_set *, fd_set*, struct timeval *);
 
 void Inet_pton(int, const char *, void *);
 

@@ -53,6 +53,12 @@ void Send(int fd, const void *ptr, size_t nbytes, int flags){
 		err_sys("send error");
 }
 
+int Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout){
+    int n;
+    if((n = select(nfds, readfds, writefds, exceptfds, timeout)) < 0)
+	err_sys("select error");
+    return(n); /* can return 0 on timeout */
+}
 
 const char *Inet_ntop(int family, const void *addrptr, char *strptr, size_t len){
     const char *ptr;
