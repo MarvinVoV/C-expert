@@ -1,0 +1,71 @@
+/*
+ * selectserver.c
+ *
+ *  Created on: May 4, 2015
+ *      Author: yamorn
+ */
+#include "gen.h"
+
+/**
+ * step: socket --> bind --> listen --> accept
+ */
+int main(int argc, char **argv){
+	int listenfd, connfd;
+	struct sockaddr_in servaddr, cliaddr;
+	fd_set rset; /* read file descriptor set */
+	int fd_a[LISTENQ]; /* the queue for completely established sockets waiting to be accepted */
+	struct timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+	int ret, maxsockfd;
+
+	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(listenfd == -1){
+		perror("socket error");
+		exit(EXIT_FAILURE);
+	}
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(SERV_PORT);
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	if(bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0){
+		perror("bind error");
+		exit(EXIT_FAILURE);
+	}
+
+	if(listen(listenfd,LISTENQ) < 0){
+		perror("listen error");
+		exit(EXIT_FAILURE);
+	}
+
+	maxsockfd = listenfd;
+	for(;;){
+		FD_ZERO(&rset);
+		FD_SET(listenfd, &rset);
+
+		ret = select(maxsockfd + 1, &rset, NULL, NULL, &tv);
+		if(ret == -1){
+			perror("select error");
+			exit(EXIT_FAILURE);
+		}
+
+
+
+
+		connfd = accept(connfd, NULL, NULL);
+		if(connfd < 0){
+			perror("accept error");
+			exit(EXIT_FAILURE);
+		}
+
+
+
+	}
+
+
+
+
+
+}

@@ -1,0 +1,27 @@
+OBJServer = selectserver.o gen.o
+OBJClient = simpleclient.o gen.o
+CC = gcc
+CFLAGS = -Wall -O -g 
+INCLUDE = -I../include
+
+
+server: $(OBJServer)
+	$(CC) $(CFLAGS) $(INCLUDE) $(OBJServer) -o $@
+selectserver.o: gen.o
+	$(CC) $(CFLAGS) $(INCLUDE) -c selectserver.c gen.o -o $@
+
+client: $(OBJClient)
+	$(CC) $(CFLAGS) $(INCLUDE) $(OBJClient) -o $@
+simpleclient.o: gen.o
+	$(CC) $(CFLAGS) $(INCLUDE) -c simpleclient.c gen.o -o $@
+	
+gen.o: gen.c 
+	$(CC) $(CFLAGS) $(INCLUDE) -c gen.c -o $@
+	
+
+.PHONY:clean help
+clean:
+	rm -rf *.o server client
+help:
+	@echo You must be root to make
+	

@@ -1,0 +1,29 @@
+/*
+ * selectserver.c
+ *
+ *  Created on: May 4, 2015
+ *      Author: yamorn
+ */
+#include "gen.h"
+
+int main(int argc, char **argv){
+	int listenfd, connfd;
+	struct sockaddr_in servaddr, cliaddr;
+
+	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(listenfd == -1){
+		perror("socket error");
+		exit(EXIT_FAILURE);
+	}
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(SERV_PORT);
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+	if(bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0){
+		perror("bind error");
+		exit(EXIT_FAILURE);
+	}
+
+}
