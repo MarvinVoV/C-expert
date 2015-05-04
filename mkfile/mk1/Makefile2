@@ -1,0 +1,15 @@
+OBJS = main.o hello1.o hello2.o
+CC = gcc
+CFLAGS = -Wall -O -g
+
+hello: $(OBJS)
+	$(CC) $(OBJS) -o hello
+main.o:hello1.o hello2.o
+	$(CC) $(CFLAGS) -c main.c hello1.o hello2.o -o main.o
+hello1.o:hello1.c hello.h
+	$(CC) $(CFLAGS) -c hello1.c -o hello1.o
+hello2.o:hello2.c hello.h
+	$(CC) $(CFLAGS) -c hello2.c -o hello2.o
+
+clean:
+	rm -rf *.o hello

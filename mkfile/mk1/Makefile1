@@ -1,0 +1,10 @@
+hello:main.o hello1.o hello2.o
+	gcc main.o hello1.o hello2.o -o hello
+main.o:hello1.o hello2.o
+	gcc -c main.c hello1.o hello2.o -o main.o
+hello1.o:hello1.c hello.h
+	gcc -c hello1.c -o hello1.o
+hello2.o:hello2.c hello.h
+	gcc -c hello2.c -o hello2.o
+clean:
+	rm -rf *.o hello
