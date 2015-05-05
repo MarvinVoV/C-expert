@@ -24,6 +24,8 @@
 #include <errno.h>
 #include <string.h>
 #include <strings.h>
+#include <syslog.h>
+#include <sys/resource.h>
 
 #define SERV_PORT 9877 /* TCP */
 #define MAXLEN 4096
@@ -37,6 +39,9 @@
 ssize_t readline(int, void *, size_t);
 
 ssize_t writen(int, const void *, size_t);
+
+
+int daemonize(const char *, int);
 
 
 #endif /* GEN_H_ */
