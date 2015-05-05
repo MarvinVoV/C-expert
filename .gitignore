@@ -1,2 +1,6 @@
 a.out
 workspace/.metadata/*
+workspace/lnp/.settings/*
+workspace/lnp/.cproject
+workspace/lnp/.project
+workspace/RemoteSystemsTempFiles/*
