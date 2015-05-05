@@ -1,6 +1,6 @@
-11:44:52 **** Incremental Build of configuration Default for project lnp ****
+15:31:44 **** Incremental Build of configuration Default for project lnp ****
 make all 
 make: *** No rule to make target `all'.  Stop.
 
-11:44:52 Build Finished (took 59ms)
+15:31:44 Build Finished (took 58ms)
 
