@@ -13,3 +13,9 @@ make: *** No rule to make target `all'.  Stop.
 00:33:11 **** Incremental Build of configuration Default for project lnp ****
 make all 
 make: *** No rule to make target `all'.  Stop.
+11:44:48 **** Build of configuration Default for project lnp ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+11:44:52 **** Incremental Build of configuration Default for project lnp ****
+make all 
+make: *** No rule to make target `all'.  Stop.
