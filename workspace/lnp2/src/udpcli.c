@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 		perror("inet_pton");
 		exit(1);
 	}
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (sockfd == -1) {
 		perror("socket");
 		exit(1);
@@ -49,7 +49,10 @@ void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr,
 		exit(1);
 	}
 	while (fgets(sendbuf, MAXLEN, fp) != NULL) {
-		sendto(sockfd, sendbuf, strlen(sendbuf), 0, pservaddr, servlen);
+		if(sendto(sockfd, sendbuf, strlen(sendbuf), 0, pservaddr, servlen) == -1){
+			perror("sendto");
+			exit(1);
+		}
 		alarm(5);
 		for (;;) {
 			len = servlen;
@@ -69,10 +72,11 @@ void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr,
 				printf("from %s: %s", str, recvbuf);
 			}
 		}
-		free(preply_addr);
 	}
+	free(preply_addr);
 }
 
 void recvfrom_alarm(int signo) {
+	printf("alarm handler");
 	return;
 }
