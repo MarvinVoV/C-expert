@@ -46,4 +46,5 @@ void Gettimeofday(struct timeval *, void *);
 
 void Sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
 
+uint16_t in_cksum(uint16_t *, int);
 #endif /* YAMORN_H_ */

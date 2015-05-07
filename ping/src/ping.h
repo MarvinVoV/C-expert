@@ -42,14 +42,12 @@ int sockfd;
 int nsent; 		/* add 1 for each sendto() */
 
 /* function prototypes */
-void init_v6(void);
 void proc_v4(char *, ssize_t, struct msghdr *, struct timeval *);
-void proc_v6(char *, ssize_t, struct msghdr *, struct timeval *);
 void send_v4(void);
-void send_v6(void);
 void readloop(void);
 void sig_alrm(int);
 void tv_sub(struct timeval *, struct timeval *);
+
 
 struct proto {
 	void (*fproc)(char *, ssize_t, struct msghdr *, struct timeval *);

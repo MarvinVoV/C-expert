@@ -6,6 +6,8 @@
  */
 #include "yamorn.h"
 
+static char *__inet_ntop(const struct sockaddr *, socklen_t);
+
 char *Inet_ntop(const struct sockaddr *sa, socklen_t salen) {
 	char *ptr;
 	if ((ptr = __inet_ntop(sa, salen)) == NULL) {
@@ -15,7 +17,7 @@ char *Inet_ntop(const struct sockaddr *sa, socklen_t salen) {
 	return (ptr);
 }
 
-char *__inet_ntop(const struct sockaddr *sa, socklen_t salen) {
+static char *__inet_ntop(const struct sockaddr *sa, socklen_t salen) {
 	static char str[128]; /* unix domain is largest */
 	switch (sa->sa_family) {
 	case AF_INET: {
@@ -30,28 +32,6 @@ char *__inet_ntop(const struct sockaddr *sa, socklen_t salen) {
 			return (NULL);
 		return (str);
 	}
-#ifdef AF_UNIX
-	case AF_UNIX: {
-		struct sockaddr_un *unp = (struct sockaddr_un *) sa;
-		if (unp->sun_path[0] == 0)
-			strcpy(str, ("no pathname bound"));
-		else
-			snprintf(str, sizeof(str), "%s", unp->sun_path);
-		return (str);
-	}
-#endif
-#ifdef	HAVE_SOCKADDR_DL_STRUCT
-		case AF_LINK: {
-			struct sockaddr_dl *sdl = (struct sockaddr_dl *) sa;
-
-			if (sdl->sdl_nlen > 0)
-			snprintf(str, sizeof(str), "%*s",
-					sdl->sdl_nlen, &sdl->sdl_data[0]);
-			else
-			snprintf(str, sizeof(str), "AF_LINK, index=%d", sdl->sdl_index);
-			return(str);
-		}
-#endif
 	default:
 		snprintf(str, sizeof(str), "sock_ntop_host: unknown AF_xxx: %d, len %d",
 				sa->sa_family, salen);

@@ -9,9 +9,6 @@
 #include "ping.h"
 
 struct proto proto_v4 = { proc_v4, send_v4, NULL, NULL, NULL, 0, IPPROTO_ICMP };
-#ifdef IPV6
-struct proto proto_v6= {proc_v6,send_v6,init_v6,NULL,NULL,0,IPPROTO_ICMPV6};
-#endif
 
 int datalen = 56; /* data that goes with ICMP echo request */
 
@@ -46,14 +43,6 @@ int main(int argc, char **argv) {
 	/* initialize according to protocol */
 	if (ai->ai_family == AF_INET) {
 		pr = &proto_v4;
-#ifdef IPV6
-	} else if(ai->ai_family==AF_INET6) {
-		pr=&proto_v6;
-		if (IN6_IS_ADDR_V4MAPPED(&(((struct sockaddr_in6 *)ai->ai_addr)->sin6_addr))) {
-			perror("cannot ping IPv4-mapped IPv6 address");
-			exit(1);
-		}
-#endif
 	} else {
 		fprintf(stderr, "unknown address family %d", ai->ai_family);
 		exit(1);
@@ -144,58 +133,36 @@ void proc_v4(char *ptr, ssize_t len, struct msghdr *msg, struct timeval *tvrecv)
 		rtt = tvrecv->tv_sec * 1000.0 + tvrecv->tv_usec / 1000.0;
 
 		printf("%d bytes from %s: seq=%u, ttl=%d, rtt=%.3f ms\n", icmplen,
-				Sock_ntop_host(pr->sarecv, pr->salen), icmp->icmp_seq,
+				Inet_ntop(pr->sarecv, pr->salen), icmp->icmp_seq,
 				ip->ip_ttl, rtt);
 
 	} else if (verbose) {
-		printf("  %d bytes from %s: type = %d, code = %d\n", icmplen,
-				Sock_ntop_host(pr->sarecv, pr->salen), icmp->icmp_type,
-				icmp->icmp_code);
+		//printf("  %d bytes from %s: type = %d, code = %d\n", icmplen,
+		//		Sock_ntop_host(pr->sarecv, pr->salen), icmp->icmp_type,
+		//		icmp->icmp_code);
 	}
 }
 
-void proc_v6(char *ptr, ssize_t len, struct msghdr *msg, struct timeval* tvrecv) {
-#ifdef	IPV6
-	double rtt;
-	struct icmp6_hdr *icmp6;
-	struct timeval *tvsend;
-	struct cmsghdr *cmsg;
-	int hlim;
+void sig_alrm(int signo){
+	(*pr->fsend)();
+	alarm(1);
+	return;
+}
 
-	icmp6 = (struct icmp6_hdr *) ptr;
-	if (len < 8)
-	return; /* malformed packet */
+void send_v4(void){
+	int len;
+	struct icmp *icmp;
+	icmp = (struct icmp *)sendbuf;
+	icmp->icmp_type = ICMP_ECHO;
+	icmp->icmp_code = 0;
+	icmp->icmp_id = pid;
+	icmp->icmp_seq = nsent++;
+	memset(icmp->icmp_data, 0xa5, datalen); /* fill with pattern */
+	Gettimeofday((struct timeval *)icmp->icmp_data, NULL);
 
-	if (icmp6->icmp6_type == ICMP6_ECHO_REPLY) {
-		if (icmp6->icmp6_id != pid)
-		return; /* not a response to our ECHO_REQUEST */
-		if (len < 16)
-		return; /* not enough data to use */
+	len = 8 + datalen; /* checksum ICMP header and data */
+	icmp->icmp_cksum = 0;
+	icmp->icmp_cksum = in_cksum((u_short *)icmp, len);
 
-		tvsend = (struct timeval *) (icmp6 + 1);
-		tv_sub(tvrecv, tvsend);
-		rtt = tvrecv->tv_sec * 1000.0 + tvrecv->tv_usec / 1000.0;
-
-		hlim = -1;
-		for (cmsg = CMSG_FIRSTHDR(msg); cmsg != NULL; cmsg = CMSG_NXTHDR(msg, cmsg)) {
-			if (cmsg->cmsg_level == IPPROTO_IPV6 &&
-					cmsg->cmsg_type == IPV6_HOPLIMIT) {
-				hlim = *(u_int32_t *)CMSG_DATA(cmsg);
-				break;
-			}
-		}
-		printf("%d bytes from %s: seq=%u, hlim=",
-				len, Sock_ntop_host(pr->sarecv, pr->salen),
-				icmp6->icmp6_seq);
-		if (hlim == -1)
-		printf("???"); /* ancillary data missing */
-		else
-		printf("%d", hlim);
-		printf(", rtt=%.3f ms\n", rtt);
-	} else if (verbose) {
-		printf("  %d bytes from %s: type = %d, code = %d\n",
-				len, Sock_ntop_host(pr->sarecv, pr->salen),
-				icmp6->icmp6_type, icmp6->icmp6_code);
-	}
-#endif	/* IPV6 */
+	Sendto(sockfd, sendbuf, len, 0, pr->sasend, pr->salen);
 }
