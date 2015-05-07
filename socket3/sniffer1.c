@@ -86,7 +86,7 @@ void printIpHeader(unsigned char *buffer, int size){
     fprintf(logfile, "\t|-Type Of Service   : %d\n",(unsigned int)iph->tos);
     fprintf(logfile, "\t|-IP Total Length   : %d  Bytes(size of Packet)\n",ntohs(iph->tot_len));
     fprintf(logfile, "\t|-Identification    : %d\n",ntohs(iph->id));
-    fprintf(logfile, "\t|-TTL      	    : %d\n",(unsigned int)iph->ttl);
+    fprintf(logfile, "\t|-TTL      	        : %d\n",(unsigned int)iph->ttl);
     fprintf(logfile, "\t|-Protocol          : %d\n",(unsigned int)iph->protocol);
     fprintf(logfile, "\t|-Checksum          : %d\n",ntohs(iph->check));
     fprintf(logfile, "\t|-Source IP         : %s\n",inet_ntoa(src.sin_addr));
@@ -98,7 +98,7 @@ void printIpHeader(unsigned char *buffer, int size){
 void printTcpPacket(unsigned char *buffer, int size){
 	unsigned short iphdrlen;
 	struct iphdr *iph = (struct iphdr *)buffer;
-	iphdrlen = iph->ihl * 4;
+	iphdrlen = iph->ihl * 4; /* ihl field is the number of 32-bit words */
 	struct tcphdr *tcph = (struct tcphdr *)(buffer + iphdrlen);
 	fprintf(logfile,"\n\n***********************TCP Packet*************************\n");   
 	
@@ -204,7 +204,7 @@ void printData(unsigned char* data , int size){
     for(i = 0 ; i < size ; i++){
         if( i != 0 && i % 16 == 0){   //if one line of hex printing is complete...     
             fprintf(logfile,"         ");
-            for(j = i-16 ; j<i ; j++){   
+            for(j = i-16 ; j < i ; j++){   
                 if(data[j] >= 32 && data[j] <= 128)
                     fprintf(logfile, "%c", (unsigned char)data[j]); //if it is a number or alphabet
                 else 
@@ -213,17 +213,17 @@ void printData(unsigned char* data , int size){
             fprintf(logfile, "\n");
         } 
          
-        if(i%16==0) 
+        if(i % 16==0) 
         	fprintf(logfile,"   ");
         fprintf(logfile, " %02X", (unsigned int)data[i]);
                  
-        if( i == size-1){  //print the last spaces
+        if( i == size - 1){  //print the last spaces
             for(j = 0; j< 15 - i % 16; j++) 
             	fprintf(logfile, "   "); //extra spaces
             	
             fprintf(logfile,"         ");
              
-            for(j = i-i % 16 ; j <= i; j++){
+            for(j = i - i % 16 ; j <= i; j++){
                 if(data[j] >= 32 && data[j] <= 128) 
                 	fprintf(logfile, "%c", (unsigned char)data[j]);
                 else 
