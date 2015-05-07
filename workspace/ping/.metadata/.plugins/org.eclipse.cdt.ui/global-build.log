@@ -1,0 +1,57 @@
+14:30:02 **** Build of configuration Debug for project ping ****
+make all 
+Building file: ../src/in_cksum.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/in_cksum.d" -MT"src/in_cksum.d" -o "src/in_cksum.o" "../src/in_cksum.c"
+Finished building: ../src/in_cksum.c
+ 
+Building file: ../src/main.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.d" -o "src/main.o" "../src/main.c"
+Finished building: ../src/main.c
+ 
+Building file: ../src/wraplinux.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/wraplinux.d" -MT"src/wraplinux.d" -o "src/wraplinux.o" "../src/wraplinux.c"
+../src/wraplinux.c: In function ‘Gettimeofday’:
+../src/wraplinux.c:21:2: warning: implicit declaration of function ‘gettimeofday’ [-Wimplicit-function-declaration]
+  if (gettimeofday(tv, foo) == -1){
+  ^
+Finished building: ../src/wraplinux.c
+ 
+Building file: ../src/wrapsignal.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/wrapsignal.d" -MT"src/wrapsignal.d" -o "src/wrapsignal.o" "../src/wrapsignal.c"
+Finished building: ../src/wrapsignal.c
+ 
+Building file: ../src/wrapsocket.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/wrapsocket.d" -MT"src/wrapsocket.d" -o "src/wrapsocket.o" "../src/wrapsocket.c"
+Finished building: ../src/wrapsocket.c
+ 
+Building target: ping
+Invoking: Cross GCC Linker
+gcc  -o "ping"  ./src/in_cksum.o ./src/main.o ./src/wraplinux.o ./src/wrapsignal.o ./src/wrapsocket.o   
+Finished building target: ping
+ 
+14:30:08 **** Incremental Build of configuration Debug for project ping ****
+make all 
+make: Nothing to be done for `all'.
+14:31:18 **** Incremental Build of configuration Debug for project ping ****
+make all 
+make: Nothing to be done for `all'.
+14:31:37 **** Incremental Build of configuration Debug for project ping ****
+make all 
+make: Nothing to be done for `all'.
+14:36:30 **** Incremental Build of configuration Debug for project ping ****
+make all 
+Building file: ../src/main.c
+Invoking: Cross GCC Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.d" -o "src/main.o" "../src/main.c"
+Finished building: ../src/main.c
+ 
+Building target: ping
+Invoking: Cross GCC Linker
+gcc  -o "ping"  ./src/in_cksum.o ./src/main.o ./src/wraplinux.o ./src/wrapsignal.o ./src/wrapsocket.o   
+Finished building target: ping
+ 
