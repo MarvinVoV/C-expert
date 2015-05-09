@@ -59,6 +59,8 @@ ssize_t Recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
 
 uint16_t in_cksum(uint16_t *, int);
 
+void Inet_aton(const char *, struct in_addr *);
+
 
 
 /* wrap linux */

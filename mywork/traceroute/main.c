@@ -5,7 +5,7 @@ int main(int argc, char **argv) {
 	int c;
 	char *hostname;
 	struct addrinfo *ai;
-	struct sockaddr *sasend;
+	struct sockaddr addr, bindaddr;
 	struct ip *ip;
 
 	while ((c = getopt(argc, argv, "m:h:")) != -1) {
@@ -33,61 +33,33 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
-	ai = Getaddrinfo(hostname, NULL, AF_UNSPEC, 0);
+	ai = Getaddrinfo(hostname, "discard", AF_UNSPEC, SOCK_DGRAM);
 	host = Sock_ntop_host(ai->ai_addr, ai->ai_addrlen);
-	printf("traceroute to %s (%s): %d hops max, %d data bytes\n",
-			ai->ai_canonname ? ai->ai_canonname : host, hostname, max_ttl,
-			datalen);
+	printf("traceroute to %s (%s): %d hops max, %d data bytes\n",ai->ai_canonname ? ai->ai_canonname : host, hostname, max_ttl, datalen);
 
-//	recvfd = Socket(ai->ai_family, SOCK_RAW, IPPROTO_ICMP);
+	recvfd = Socket(ai->ai_family, SOCK_RAW, IPPROTO_ICMP);
 
-//	printf("protocol=%d\n",ai->ai_family);
-	sendfd = Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-//	sport = (getpid() & 0xffff) | 0x8000; /* UDP port */
-//
-//	struct sockaddr *sabind;
-//	sabind = Calloc(1, ai->ai_addrlen);
-//	sabind->sa_family = ai->ai_family;
-//	setSockPort(sabind, htons(sport));
-//	printf("sizeof(*sabind)=%ld, sizeof(struct sockaddr)=%ld\n",sizeof(*sabind),sizeof(struct sockaddr));
-//
-//	Bind(sendfd, sabind, sizeof(*sabind));
-
+	sendfd = Socket(ai->ai_family, SOCK_DGRAM, IPPROTO_UDP);
 	int ttl = 1;
-//	Setsockopt(sendfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(int));
-	printf("%2d ", ttl);
-	fflush(stdout);
 
-	struct data *data = (struct data *) sendbuf;
-	datalen = sizeof(struct data);
-	data->seq = 1;
-	data->ttl = 1;
-	Gettimeofday(&data->tv, NULL);
+	sport = 23334;
 
-	struct sockaddr destaddr;
-	printf("\n%d\n",datalen);
-	printf("sendfd= %d\n", sendfd);
-	Sendto(sendfd, sendbuf, datalen, 0, &destaddr, sizeof(destaddr));
-	printf("helo");
-	int n;
-	struct icmp *icmp;
-	int icmplen;
-	for (;;) {
-		n = recvfrom(recvfd, recvbuf, sizeof(recvbuf), 0, NULL, NULL);
-		if (n < 0) {
-			if (errno == EINTR) {
-				continue;
-			} else {
-				perror("recvfrom");
-				exit(1);
-			}
-			ip = (struct ip *) recvbuf;
-			int hlen = ip->ip_hl << 2;
-			icmp = (struct icmp *) (recvbuf + hlen);
-			if ((icmplen = n - hlen) < 0)
-				continue;
-			printf("code = %d \n", icmp->icmp_code);
-		}
+	Bind(sendfd, &bindaddr, sizeof(bindaddr));
+	Setsockopt (sendfd, IPPROTO_IP, IP_TTL, (char *)&ttl, sizeof(ttl));
+	const char *p= "hello";
+	ai->ai_flags = 0;
+	ai->ai_next = 0;
+
+	printf("zz=%d\n",((struct sockaddr_in *)ai->ai_addr)->sin_port);
+	Sendto(sendfd, p, 6, 0, ai->ai_addr , ai->ai_addrlen);
+	printf("hello");
+
+	socklen_t len = sizeof(addr);
+
+	for(;;){
+		Recvfrom(recvfd, recvbuf, sizeof(recvbuf), 0 , &addr, &len);
+		printf("len=%ld\n",strlen(recvbuf));
 	}
 
+	Close(sendfd);
 }

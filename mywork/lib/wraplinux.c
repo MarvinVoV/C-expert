@@ -27,7 +27,7 @@ void Gettimeofday(struct timeval *tv, void *foo){
 
 void Close(int fd){
     if(close(fd) == -1){
-	perror("close error");
-	exit(1);
+    	perror("close error");
+    	exit(1);
     }
 }

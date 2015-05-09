@@ -14,37 +14,37 @@
 int Socket(int family, int type, int protocol){
     int n;
     if((n = socket(family, type, protocol)) < 0){
-	perror("socket");
-	exit(1);
+    	perror("socket");
+    	exit(1);
     }
     return(n);
 }
 
 void Bind(int fd, const struct sockaddr *sa, socklen_t salen){
     if(bind(fd, sa, salen) < 0){
-	perror("bind");
-	exit(1);
+    	perror("bind");
+    	exit(1);
     }
 }
 
 void Setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen){
     if(setsockopt(sockfd, level, optname, optval, optlen) < 0){
-	perror("setsockopt");
-	exit(1);
+    	perror("setsockopt");
+    	exit(1);
     }
 }
 
 void setSockPort(struct sockaddr *sa, int port){
     switch(sa->sa_family){
 	case AF_INET:{
-	    struct sockaddr_in *sin = (struct sockaddr_in *) sa;
-	    sin->sin_port = port;
+	    	struct sockaddr_in *sin = (struct sockaddr_in *) sa;
+	    	sin->sin_port = port;
 	    return;
 	    }
     #ifdef IPV6
 	case AF_INET6:{
-	    struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
-	    sin6->sin6_port = port;
+	    	struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)sa;
+	    	sin6->sin6_port = port;
 	    return;
 	    }
     #endif
@@ -62,8 +62,8 @@ void Sendto(int fd, const void *ptr, size_t nbytes, int flags,
 ssize_t Recvfrom(int sockfd, void *buf, size_t len, int flags, struct sockaddr *src_addr, socklen_t *addrlen){
     ssize_t n;
     if((n = recvfrom(sockfd, buf, len, flags, src_addr, addrlen)) < 0){
-	perror("recvfrom");
-	exit(1);
+    	perror("recvfrom");
+    	exit(1);
     }
     return(n);
 }
@@ -137,5 +137,12 @@ int cmpSockAddr(const struct sockaddr *sa1, const struct sockaddr *sa2, socklen_
 #endif
 	}
     return (-1);
+}
+
+void Inet_aton(const char *cp, struct in_addr *inp){
+	if(inet_aton(cp, inp) == 0){
+		perror("inet_atop");
+		exit(1);
+	}
 }
 
