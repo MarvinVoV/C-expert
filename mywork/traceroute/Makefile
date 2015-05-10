@@ -12,6 +12,21 @@ troute: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 main.o: $(LIBS) 
 	$(CC) $(CFLAGS) -c main.c $(LIBS) -o $@
+	
+recvicmp: recvicmp.o $(LIBS)
+	$(CC) $(CFLAGS) recvicmp.o $(LIBS) -o $@
+recvicmp.o: $(LIBS)
+	$(CC) $(CFLAGS) -c recvicmp.c $(LIBS) -o $@
+
+sendicmp: sendicmp.o $(LIBS)
+	$(CC) $(CFLAGS) sendicmp.o $(LIBS) -o $@
+sendicmp.o: $(LIBS)
+	$(CC) $(CFLAGS) -c sendicmp.c $(LIBS) -o $@
+	
+sendarp: sendarp.o $(LIBS)
+	$(CC) $(CFLAGS) sendarp.o $(LIBS) -o $@
+sendarp.o: $(LIBS)
+	$(CC) $(CFLAGS) -c sendarp.c $(LIBS) -o $@
 
 wraplinux.o: $(LIBDIR)/wraplinux.c 
 	$(CC) $(CFLAGS) -c $(LIBDIR)/wraplinux.c -o $@
@@ -24,4 +39,4 @@ wrapsignal.o: $(LIBDIR)/wrapsignal.c
 
 .PHONY: clean
 clean:
-	rm -rf $(ODIR)/*.o *~ troute
+	rm -rf $(ODIR)/*.o *~ troute recvicmp sendarp

@@ -1,20 +1,18 @@
 #include "yamorn.h"
 #include "udpdemo.h"
 int main(void) {
-	struct sockaddr_in saserv, sacli;
-	socklen_t saddrlen = sizeof(saserv);
+	struct sockaddr_in sacli;
+	socklen_t saddrlen = sizeof(sacli);
+	struct addrinfo *ai;
 	int sockfd;
 	sockfd = Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	bzero(&saserv, saddrlen);
 
-	saserv.sin_family = AF_INET;
-	saserv.sin_port = htons(PORT);
-	saserv.sin_addr.s_addr = htonl(INADDR_ANY);
+	ai = Getaddrinfo(SERVER, NULL, AF_UNSPEC, 0);
+	((struct sockaddr_in *)ai->ai_addr)->sin_port = htons(PORT);
 
 	int yes = 1;
 	Setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-	Bind(sockfd, (struct sockaddr *) &saserv, sizeof(saserv));
-
+	Bind(sockfd, ai->ai_addr, ai->ai_addrlen);
 
 	for (;;) {
 		printf("Waiting for data ...\n");

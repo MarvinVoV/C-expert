@@ -6,15 +6,15 @@ CFLAGS = -g -Wall -O -I$(IDIR)
 
 LIBS = wraplinux.o wrapsocket.o wrapstdio.o wrapsignal.o 
 
-all: server client
-client: client.o $(LIBS)
-	$(CC) $(CFLAGS) client.o $(LIBS) -o $@
-server: server.o $(LIBS)
-	$(CC) $(CFLAGS) server.o $(LIBS) -o $@
-client.o: $(LIBS)
-	$(CC) $(CFLAGS) -c client.c $(LIBS) -o $@
-server.o: $(LIBS)
-	$(CC) $(CFLAGS) -c server.c $(LIBS) -o $@
+all: server1 client1
+client1: client1.o $(LIBS)
+	$(CC) $(CFLAGS) client1.o $(LIBS) -o $@
+server1: server1.o $(LIBS)
+	$(CC) $(CFLAGS) server1.o $(LIBS) -o $@
+client1.o: $(LIBS)
+	$(CC) $(CFLAGS) -c client1.c $(LIBS) -o $@
+server1.o: $(LIBS)
+	$(CC) $(CFLAGS) -c server1.c $(LIBS) -o $@
 
 wraplinux.o: $(LIBDIR)/wraplinux.c 
 	$(CC) $(CFLAGS) -c $(LIBDIR)/wraplinux.c -o $@
@@ -27,4 +27,4 @@ wrapsignal.o: $(LIBDIR)/wrapsignal.c
 
 .PHONY: clean
 clean:
-	rm -rf $(ODIR)/*.o *~ client server
+	rm -rf $(ODIR)/*.o *~ client1 server1

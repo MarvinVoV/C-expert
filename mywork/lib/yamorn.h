@@ -19,6 +19,7 @@
 #include <sys/resource.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <time.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -26,8 +27,13 @@
 #include <netinet/ip_icmp.h>
 #include <netinet/udp.h>
 #include <netinet/tcp.h>
+#include <linux/if_packet.h>
+#include <linux/if_arp.h>
+#include <linux/if_ether.h>
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <net/ethernet.h>
+#include <netinet/ether.h>
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
