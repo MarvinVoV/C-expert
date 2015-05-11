@@ -37,10 +37,11 @@
 
 int sockfd;
 unsigned char buf[BUF_SIZ];
+unsigned char recvbuf[BUF_SIZ];
 unsigned char src_mac[6]; /* source mac */
 unsigned char dst_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }; /* broadcast */
 unsigned char spa[4] = { 192, 168, 1, 109 };
-unsigned char tpa[4] = { 192, 168, 1, 107 };
+unsigned char tpa[4] = { 192, 168, 1, 105 };
 
 struct arp_packet {
 	struct ether_header eh;	/* total 14 bytes exclude check sequence*/
@@ -48,6 +49,7 @@ struct arp_packet {
 };
 
 //void sigint(int);
+void macAddrTostr(unsigned char *addr, char *buf);
 
 int main(int argc, char **argv) {
 	struct arp_packet *arpkt;
@@ -61,6 +63,7 @@ int main(int argc, char **argv) {
 	int yes = 1;
 	int i;
 	ssize_t length;
+	char macaddr[50];
 
 
 	sockfd = Socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));	 /* completely link-layer packet */
@@ -73,7 +76,7 @@ int main(int argc, char **argv) {
 	}
 	ifindex = ifrq.ifr_ifindex;
 
-	if (ioctl(sockfd, SIOCGIFHWADDR, &ifrq) < 0) { /* retrieve corresponding mac */
+	if (ioctl(sockfd, SIOCGIFHWADDR, &ifrq) < 0) { 		/* retrieve corresponding mac */
 		perror("ioctl");
 		exit(1);
 	}
@@ -85,7 +88,7 @@ int main(int argc, char **argv) {
 			src_mac[0], src_mac[1], src_mac[2], src_mac[3], src_mac[4],
 			src_mac[5]);
 
-	slladdr.sll_family = AF_PACKET; /* initialize sockaddr_ll */
+	slladdr.sll_family = AF_PACKET; 	/* initialize sockaddr_ll */
 	slladdr.sll_protocol = htons(ETH_P_ARP);
 	slladdr.sll_ifindex = ifindex;
 	slladdr.sll_hatype = 0;
@@ -112,19 +115,27 @@ int main(int argc, char **argv) {
 			sizeof(slladdr));
 
 	while (1) {
-		length = Recvfrom(sockfd, buf, BUF_SIZ, 0, NULL, NULL);
-		printf("recv length = %ld \n", length);
-		if (htons(arpkt->arp.ea_hdr.ar_pro) == ETH_P_ARP) {
-
-			if (htons(arpkt->arp.ea_hdr.ar_pro) != ARPOP_REQUEST)
+		bzero(&recvbuf, BUF_SIZ);
+		length = Recvfrom(sockfd, recvbuf, BUF_SIZ, 0, NULL, NULL);
+		if(length < sizeof(struct arp_packet))  /* not complete packet */
+			continue;
+		arpkt = (struct arp_packet *) recvbuf;
+			if (htons(arpkt->arp.ea_hdr.ar_op) != ARPOP_REPLY)
 				continue;
-			printf("buffer is---------------- %s \n", (char*) arpkt);
-		}
 
-	}
+			macAddrTostr(arpkt->arp.arp_sha, macaddr);
+			printf("target mac address is %s\n", macaddr);
+		}
 
 	Close(sockfd);
 
+}
+
+void macAddrTostr(unsigned char *addr, char *buf){
+    int i;
+    for (i = 0; i < 5; i++, buf += 3)
+        sprintf(buf, "%02X:", addr[i]);
+    sprintf(buf, "%02X", addr[i]);
 }
 
 //void sigint(int signo){
