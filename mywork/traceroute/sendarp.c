@@ -52,6 +52,7 @@ struct arp_packet {
 int main(int argc, char **argv) {
 	struct arp_packet *arpkt;
 
+	bzero(&buf, BUF_SIZ);	/* Caution: do not forget initial buf */
 	arpkt = (struct arp_packet *) buf;
 
 	struct ifreq ifrq;
@@ -97,7 +98,7 @@ int main(int argc, char **argv) {
 	memcpy(arpkt->eh.ether_dhost, dst_mac, 6);
 	arpkt->eh.ether_type = htons(ETH_P_ARP);
 
-	arpkt->arp.ea_hdr.ar_hrd = htons(ARPHRD_ETHER);
+	arpkt->arp.ea_hdr.ar_hrd = htons(ARPHRD_ETHER);	/* ARP protocol HARDWARE identifiers */
 	arpkt->arp.ea_hdr.ar_hln = 6;
 	arpkt->arp.ea_hdr.ar_pro = htons(ETH_P_IP);
 	arpkt->arp.ea_hdr.ar_pln = 4;
