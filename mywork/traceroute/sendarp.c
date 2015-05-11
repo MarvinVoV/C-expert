@@ -5,6 +5,31 @@
  *      Author: yamorn
  */
 
+/**
+ * Ethernet frame structure
+ *
+ **|** mac destination **|** mac source ***|** ethertype **|** payload **|** frame check seq**|
+ **|------ 6 bytes-------|---- 6 bytes ----|------ 2 ------|- 46 ~ 1500 -|------- 4 bytes ----|
+ **|*********************|*****************|***************|*************|********************|
+ **|--------------------- Ethernet header -----------------|---- ARP ----|--------------------|
+ *
+ *
+ * ARP structure
+ * |** HTYPE **|** PTYPE **|** HLEN **|** PLEN **|** OPER **|** SHA **|** SPA **|** THA **|** TPA **|
+ * |--2 bytes--|--2 bytes--|--1 byte--|--1 byte--|--2 bytes-|-6 bytes-|-4 bytes-|-6 bytes-|-4 bytes-|
+ *
+ * HTYPE	Hardware type
+ * PTYPE	Protocol type
+ * HLEN		Hardware address length
+ * PLEN		Protocol address length
+ * OPER		Operation
+ * SHA		Sender hardware address
+ * SPA		Sender protocol address
+ * THA		Target hardware	address
+ * TPA		Target protocol	address
+ *
+ */
+
 #include "yamorn.h"
 
 #define BUF_SIZ 42
@@ -13,41 +38,35 @@
 int sockfd;
 unsigned char buf[BUF_SIZ];
 unsigned char src_mac[6]; /* source mac */
+unsigned char dst_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }; /* broadcast */
+unsigned char spa[4] = { 192, 168, 1, 109 };
+unsigned char tpa[4] = { 192, 168, 1, 107 };
 
 struct arp_packet {
-	struct ether_header eh;
-	struct ether_arp arp;
+	struct ether_header eh;	/* total 14 bytes exclude check sequence*/
+	struct ether_arp arp;	/* total 28 bytes */
 };
 
-void sigint(int);
+//void sigint(int);
 
 int main(int argc, char **argv) {
+	struct arp_packet *arpkt;
 
-	/**
-	 * Ethernet frame structure
-	 *
-	 **|** mac destination **|** mac source ***|** ethertype **|** payload **|** frame check seq**|
-	 **|------ 6 bytes-------|---- 6 bytes ----|------ 2 ------|- 46 ~ 1500 -|------- 4 bytes ----|
-	 **|*********************|*****************|***************|*************|********************|
-	 **|--------------------- Ethernet header -----------------|---- ARP ----|--------------------|
-	 */
-
-	struct ethhdr *ehr = (struct ethhdr *) buf;
-	struct arphdr *arphr = buf + sizeof(struct ethhdr);
+	arpkt = (struct arp_packet *) buf;
 
 	struct ifreq ifrq;
 	struct sockaddr_ll slladdr;
 	int ifindex; /* Ethernet Interface index */
 	int yes = 1;
 	int i;
-	int sent;
-	int length;	/* length of receive packet */
+	ssize_t length;
 
-	sockfd = Socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP)); /* completely link-layer packet */
+
+	sockfd = Socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));	 /* completely link-layer packet */
 	Setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(int));
 
 	strncpy(ifrq.ifr_name, DEVICE, strlen(DEVICE) + 1);
-	if (ioctl(sockfd, SIOCGIFINDEX, &ifrq) < 0) { /* retrieve Ethernet interface index */
+	if (ioctl(sockfd, SIOCGIFINDEX, &ifrq) < 0) { 		/* retrieve Ethernet interface index */
 		perror("ioctl");
 		exit(1);
 	}
@@ -65,51 +84,64 @@ int main(int argc, char **argv) {
 			src_mac[0], src_mac[1], src_mac[2], src_mac[3], src_mac[4],
 			src_mac[5]);
 
-
-	slladdr.sll_family = AF_PACKET;				/* initialize sockaddr_ll */
+	slladdr.sll_family = AF_PACKET; /* initialize sockaddr_ll */
 	slladdr.sll_protocol = htons(ETH_P_ARP);
 	slladdr.sll_ifindex = ifindex;
-	slladdr.sll_hatype = htons(ARPHRD_ETHER);
-	slladdr.sll_pkttype = 0;	// PACKET_OTHERHOST
-	slladdr.sll_halen = 0;
+	slladdr.sll_hatype = 0;
+	slladdr.sll_pkttype = 0;
+	slladdr.sll_halen = 8;
 	slladdr.sll_addr[6] = 0x00;
 	slladdr.sll_addr[7] = 0x00;
 
-	while(1){
+	memcpy(arpkt->eh.ether_shost, src_mac, 6);
+	memcpy(arpkt->eh.ether_dhost, dst_mac, 6);
+	arpkt->eh.ether_type = htons(ETH_P_ARP);
+
+	arpkt->arp.ea_hdr.ar_hrd = htons(ARPHRD_ETHER);
+	arpkt->arp.ea_hdr.ar_hln = 6;
+	arpkt->arp.ea_hdr.ar_pro = htons(ETH_P_IP);
+	arpkt->arp.ea_hdr.ar_pln = 4;
+	arpkt->arp.ea_hdr.ar_op = htons(ARPOP_REQUEST);
+	memcpy(arpkt->arp.arp_sha , src_mac, 6);
+	memcpy(arpkt->arp.arp_tha , dst_mac, 6);
+	memcpy(arpkt->arp.arp_spa , spa, 4);
+	memcpy(arpkt->arp.arp_tpa , tpa, 4);
+
+	Sendto(sockfd, buf, BUF_SIZ, 0, (struct sockaddr *) &slladdr,
+			sizeof(slladdr));
+
+	while (1) {
 		length = Recvfrom(sockfd, buf, BUF_SIZ, 0, NULL, NULL);
-		if(htons(ehr->h_proto) ==  ETH_P_ARP){
-            unsigned char buf_arp_dha[6];
-            unsigned char buf_arp_dpa[4];
+		printf("recv length = %ld \n", length);
+		if (htons(arpkt->arp.ea_hdr.ar_pro) == ETH_P_ARP) {
 
-            if(htons(arphr->ar_op) !=  ARPOP_REQUEST)
-            	continue;
-            printf("buffer is---------------- %s \n",(char*)arphr);
+			if (htons(arpkt->arp.ea_hdr.ar_pro) != ARPOP_REQUEST)
+				continue;
+			printf("buffer is---------------- %s \n", (char*) arpkt);
 		}
-		sent = sendto(sockfd, buf, BUF_SIZ, 0, (struct sockaddr *)&slladdr, sizeof(slladdr));
+
 	}
-
-
 
 	Close(sockfd);
 
 }
 
-void sigint(int signo){
-	/* clean up */
-	struct ifreq ifrq;
-	if(sockfd == -1)
-		return;
-	strncpy(ifrq.ifr_name, DEVICE, strlen(DEVICE) + 1);
-	if(ioctl(sockfd, SIOCGIFFLAGS, &ifrq) < 0){
-		perror("ioctl");
-		exit(1);
-	}
-	 ifrq.ifr_flags &= ~IFF_PROMISC;
-	 if(ioctl(sockfd, SIOCSIFFLAGS, &ifrq) < 0){
-		perror("ioctl");
-		exit(1);
-	 }
-	 close(sockfd);
-	 printf("Server terminating....\n");
-	 exit(0);
-}
+//void sigint(int signo){
+//	/* clean up */
+//	struct ifreq ifrq;
+//	if(sockfd == -1)
+//		return;
+//	strncpy(ifrq.ifr_name, DEVICE, strlen(DEVICE) + 1);
+//	if(ioctl(sockfd, SIOCGIFFLAGS, &ifrq) < 0){
+//		perror("ioctl");
+//		exit(1);
+//	}
+//	 ifrq.ifr_flags &= ~IFF_PROMISC;
+//	 if(ioctl(sockfd, SIOCSIFFLAGS, &ifrq) < 0){
+//		perror("ioctl");
+//		exit(1);
+//	 }
+//	 close(sockfd);
+//	 printf("Server terminating....\n");
+//	 exit(0);
+//}
