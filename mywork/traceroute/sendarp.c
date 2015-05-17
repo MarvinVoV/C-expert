@@ -41,7 +41,7 @@ unsigned char recvbuf[BUF_SIZ];
 unsigned char src_mac[6]; /* source mac */
 unsigned char dst_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }; /* broadcast */
 unsigned char spa[4] = { 192, 168, 1, 109 };
-unsigned char tpa[4] = { 192, 168, 1, 105 };
+unsigned char tpa[4] = { 192, 168, 1, 222 };
 
 struct arp_packet {
 	struct ether_header eh;	/* total 14 bytes exclude check sequence*/
