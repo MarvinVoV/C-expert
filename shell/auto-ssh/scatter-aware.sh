@@ -1,5 +1,15 @@
 #!/bin/bash
 
+###
+# Note: Before running this script, please ensure you have installed 'expect' on each system 
+###
+# check expect command
+if ! type "expect" > /dev/null; then
+    echo "please intall expect on each matchine in this cluster"
+    echo "run: sudo apt-get install expect"
+    exit 1
+fi
+
 # params: user, host, passwd
 function ssh_auto_keygen(){
     expect << EOF 
@@ -16,19 +26,12 @@ function ssh_auto_keygen(){
 EOF
 }
 
-function scp_auto_copy(){
-
-    scp $1 $2@$3:$4
-}
 
 if [ $( id -u ) -ne 0 ]; then
     echo "Permission denied."
     exit 1
 fi
 
-if ! type "expect" > /dev/null; then
-    apt-get install expect;
-fi
 
 flag="y";
 i=0;
@@ -47,11 +50,20 @@ done
 
 length=$i;
 
+# copy remote script
 for (( i=0; i<$length; i++ ))
 do
     ssh_auto_keygen ${users[$i]} ${hosts[$i]} ${passwds[$i]}
+    expect << EOF
+    spawn scp ssh-id-cp.sh ${users[$i]}@${hosts[$i]}:$HOME
+    expect {
+        "*assword" { send "${passwds[$i]}\r";}
+    }
+    expect eof;
+EOF
 done
 
+# copy ssh identify 
 for (( i=0; i<$length; i++ ))
 do
     for (( j=0; j<$length; j++))
@@ -59,8 +71,28 @@ do
         if [ $i -eq $j ]; then
             continue
         fi
-        ssh_auto_copy_rsa ${users[$i]} ${hosts[$i]} ${passwds[$i]} ${hosts[$j]} ${passwds[$j]}
+        expect << EOF
+        spawn ssh ${users[$i]}@${hosts[$i]} "bash $HOME/ssh-id-cp.sh ${hosts[$j]} ${passwds[$j]}"      
+        expect {
+            "*yes/no"  { send "yes\r"; exp_continue }
+            "*assword" { send "${passwds[$i]}\r"    }
+        }
+        expect eof;
+EOF
     done
+done
+
+# Clean
+for (( i=0; i<$length; i++))
+do
+    expect << EOF
+    spawn ssh ${users[$i]}@${hosts[$i]} "rm -f $HOME/ssh-id-cp.sh"
+    expect {
+        "*yes/no"  { send "yes\r"; exp_continue }
+        "*assword" { send "${passwds[$i]}\r"    }
+    }
+    expect eof;
+EOF
 done
 
 echo "done"
