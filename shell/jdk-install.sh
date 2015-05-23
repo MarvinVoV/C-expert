@@ -13,7 +13,9 @@ JDK_ROOT_FOLDER="jdk1.7.0_80"
 JDK_STD_FOLDER="/usr/java"
 PROFILE="/etc/profile"
 
-wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_DURL -O ./$JDK_FILE
+if [ ! -f $JDK_FILE ];then
+    wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_DURL -O ./$JDK_FILE
+fi
 
 if [ $? -ne 0 ];
 then 
