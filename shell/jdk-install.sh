@@ -13,7 +13,7 @@ JDK_ROOT_FOLDER="jdk1.7.0_80"
 JDK_STD_FOLDER="/usr/java"
 PROFILE="/etc/profile"
 
-#wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_DURL -O ./$JDK_FILE
+wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" $JDK_DURL -O ./$JDK_FILE
 
 if [ $? -ne 0 ];
 then 
@@ -35,7 +35,7 @@ then
 	mkdir -p "$JDK_INSTALL_DIR"
 fi
 
-#tar -zxvf $JDK_FILE -C $JDK_INSTALL_DIR
+tar -zxvf $JDK_FILE -C $JDK_INSTALL_DIR
 
 if [ ! -d "$JDK_STD_FOLDER" ];
 then
