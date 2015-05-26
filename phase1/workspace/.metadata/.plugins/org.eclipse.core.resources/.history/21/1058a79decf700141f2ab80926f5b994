@@ -1,0 +1,82 @@
+/*
+ * yamorn.h
+ *
+ *  Created on: May 6, 2015
+ *      Author: louis
+ */
+
+#ifndef YAMORN_H_
+#define YAMORN_H_
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
+#include <sys/signal.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <time.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
+#include <netinet/udp.h>
+#include <netinet/tcp.h>
+#include <linux/if_packet.h>
+#include <linux/if_arp.h>
+#include <linux/if_ether.h>
+#include <ifaddrs.h>
+#include <net/ethernet.h>
+#include <signal.h>
+#include <string.h>
+#include <errno.h>
+
+#define	max(a,b)	((a) > (b) ? (a) : (b))
+#define	min(a,b)	((a) < (b) ? (a) : (b))
+
+typedef	void Sigfunc(int);	/* for signal handlers */
+
+/* wrap socket */
+
+char *Sock_ntop_host(const struct sockaddr *, socklen_t);
+
+struct addrinfo *Getaddrinfo(const char *, const char *, int, int);
+
+int Socket(int, int, int);
+
+void Bind(int, const struct sockaddr *, socklen_t);
+
+void Setsockopt(int, int, int, const void *, socklen_t);
+
+void setSockPort(struct sockaddr *, int);
+
+int cmpSockAddr(const struct sockaddr *, const struct sockaddr *, socklen_t);
+
+void Sendto(int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+
+ssize_t Recvfrom(int, void *, size_t, int, struct sockaddr *, socklen_t *);
+
+uint16_t in_cksum(uint16_t *, int);
+
+void Inet_aton(const char *, struct in_addr *);
+
+
+
+/* wrap linux */
+void Close(int);
+
+void Gettimeofday(struct timeval *, void *);
+
+void *Calloc(size_t, size_t);
+
+Sigfunc *Signal(int, Sigfunc *);
+
+/* wrap stdio */
+FILE *Fopen(const char *, const char *);
+
+#endif /* YAMORN_H_ */

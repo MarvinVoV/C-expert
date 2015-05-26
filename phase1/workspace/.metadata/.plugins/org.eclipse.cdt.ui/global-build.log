@@ -1,0 +1,15 @@
+23:01:55 **** Build of configuration Default for project troute1 ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+23:02:22 **** Incremental Build of configuration Default for project troute1 ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+00:40:30 **** Build of configuration Default for project troute1 ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+00:40:30 **** Incremental Build of configuration Default for project troute1 ****
+make all 
+make: *** No rule to make target `all'.  Stop.
+01:44:28 **** Incremental Build of configuration Default for project troute1 ****
+make all 
+make: *** No rule to make target `all'.  Stop.

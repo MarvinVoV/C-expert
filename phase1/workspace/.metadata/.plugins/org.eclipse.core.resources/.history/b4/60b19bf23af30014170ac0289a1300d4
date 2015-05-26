@@ -1,0 +1,82 @@
+#include "gen.h"
+
+void recvfrom_alarm(int);
+
+void dg_cli(FILE *, int, const struct sockaddr *, socklen_t);
+
+int main(int argc, char **argv) {
+	int sockfd;
+	struct sockaddr_in servaddr;
+	if (argc != 2) {
+		fprintf(stderr, "usage:%s <ip address>\n", argv[0]);
+		exit(1);
+	}
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(13);
+	if (inet_pton(AF_INET, argv[1], &servaddr.sin_addr) == -1) {
+		perror("inet_pton");
+		exit(1);
+	}
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd == -1) {
+		perror("socket");
+		exit(1);
+	}
+	dg_cli(stdin, sockfd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+
+	exit(0);
+}
+
+void dg_cli(FILE *fp, int sockfd, const struct sockaddr *pservaddr,
+		socklen_t servlen) {
+	int n;
+	const int on = 1;
+	char sendbuf[MAXLEN], recvbuf[MAXLEN + 1];
+	socklen_t len;
+	struct sockaddr *preply_addr;
+	struct sigaction sa;
+	preply_addr = malloc(servlen);
+	if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on)) == -1) {
+		perror("setsockopt");
+		exit(1);
+	}
+	sa.sa_handler = recvfrom_alarm;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGALRM, &sa, NULL) == -1) {
+		perror("sigaction");
+		exit(1);
+	}
+	while (fgets(sendbuf, MAXLEN, fp) != NULL) {
+		if(sendto(sockfd, sendbuf, strlen(sendbuf), 0, pservaddr, servlen) == -1){
+			perror("sendto");
+			exit(1);
+		}
+		alarm(5);
+		for (;;) {
+			len = servlen;
+			n = recvfrom(sockfd, recvbuf, MAXLEN, 0, preply_addr, &len);
+			if (n < 0) {
+				if (errno == EINTR) {
+					break; /* waited long enough for replies */
+				} else {
+					perror("recvfrom");
+					exit(1);
+				}
+			} else {
+				recvbuf[n] = 0; /* null terminate */
+				char str[128];
+				struct sockaddr_in *sin = (struct sockaddr_in *)preply_addr;
+				inet_ntop(AF_INET, &sin->sin_addr, str, sizeof(str));
+				printf("from %s: %s", str, recvbuf);
+			}
+		}
+	}
+	free(preply_addr);
+}
+
+void recvfrom_alarm(int signo) {
+	printf("alarm handler");
+	return;
+}
