@@ -4,19 +4,25 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/lib/readline.c \
-../src/lib/readn.c \
-../src/lib/writen.c 
+../src/lib/sun_io.c \
+../src/lib/sun_linux.c \
+../src/lib/sun_math.c \
+../src/lib/sun_socket.c \
+../src/lib/sun_stdio.c 
 
 OBJS += \
-./src/lib/readline.o \
-./src/lib/readn.o \
-./src/lib/writen.o 
+./src/lib/sun_io.o \
+./src/lib/sun_linux.o \
+./src/lib/sun_math.o \
+./src/lib/sun_socket.o \
+./src/lib/sun_stdio.o 
 
 C_DEPS += \
-./src/lib/readline.d \
-./src/lib/readn.d \
-./src/lib/writen.d 
+./src/lib/sun_io.d \
+./src/lib/sun_linux.d \
+./src/lib/sun_math.d \
+./src/lib/sun_socket.d \
+./src/lib/sun_stdio.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

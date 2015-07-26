@@ -14,7 +14,7 @@ void termination_handler(int signum){
 	exit(0);
 }
 
-int main(int argc, char *argv[]){
+int main_tyy(int argc, char *argv[]){
 
 	int res;
 	struct sigaction act, oact;

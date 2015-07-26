@@ -11,8 +11,7 @@ RM := rm -rf
 -include tools/subdir.mk
 -include src/signal/subdir.mk
 -include src/lib/subdir.mk
--include src/example2/subdir.mk
--include src/example1/subdir.mk
+-include src/io-select/subdir.mk
 -include src/subdir.mk
 -include subdir.mk
 -include objects.mk

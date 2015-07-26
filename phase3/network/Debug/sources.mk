@@ -17,6 +17,5 @@ tools \
 src/signal \
 src \
 src/lib \
-src/example2 \
-src/example1 \
+src/io-select \
 
