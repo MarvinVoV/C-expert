@@ -21,5 +21,8 @@ int main(void){
 	printf("The address of &s %p\n", s);
 	printf("The address of pointer t %p\n", &t);
 	printf("Storage size for size_t %ld\n", sizeof(size_t));
+    short x = 10000;
+    // %hi is the proper code to format a short value
+    printf("The value of x = %hi\n", x);
 	return 0;
 }
