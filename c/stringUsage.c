@@ -17,6 +17,12 @@ int main(void){
 	char cp[strlen(s)];
 	strcpy(cp, s);
 	printf("cp %s\n", cp);
+
+    char *ss = "this will be copied on the heap\n";
+    char *sscp = strdup(ss);
+    printf("address of ss is %p\n", &ss);
+    printf("address of sscp is %p\n", &sscp);
 	
+    free(sscp);
 	return 0;
 }
