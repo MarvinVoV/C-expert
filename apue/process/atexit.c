@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static void byte(void){
+static void bye(void){
 	printf("That was all folks\n");
 }
 
 int main(){
 	int i; 
-	i = atexit(byte);
+	i = atexit(bye);
 	if(i){
 		fprintf(stderr, "cannot exit function\n");
 		exit(-1);
