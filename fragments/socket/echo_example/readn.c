@@ -1,23 +1,23 @@
 #include "echo.h"
 
-ssize_t readn(int fd, void *buf, size_t nbytes){
+/* read "n" bytes from a descriptor */
+ssize_t readn(int fd, void *vptr, size_t n){
     size_t      nleft;
     ssize_t     nread;
-    char        *prt;
+    char        *ptr;
 
-    ptr = buf;
-    nleft = nbytes;
+    ptr = vptr;
+    nleft = n;
     while(nleft > 0){
-        if((nread = read(fd, buf, nleft)) < 0){
+        if((nread = read(fd, ptr, n)) < 0){
             if(errno == EINTR)
-                nread = 0; // call read() again
+                nread = 0;      // call read() again
             else
                 return (-1);
         } else if(nread == 0)
-            break;      // EOF
-
-        nleft += nread;
-        buf += nread;
+            break;    // EOF
+        nleft -= nread;
+        ptr += nread;
     }
-    return (nbytes - nleft);
+    return (n - nleft); // return >= 0
 }

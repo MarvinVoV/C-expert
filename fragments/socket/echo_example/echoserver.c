@@ -1,20 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/types.h>
-
-#define SERV_PORT 8080
-#define BUF_SIZE  2048 * 10
+#include "echo.h"
 
 void str_echo(int sockfd);
 
 int main(int argc, char **argv){
     int                 listenfd, connfd;
     pid_t               childpid;
-    socklen_t           chilen;
+    socklen_t           clilen;
     struct sockaddr_in  cliaddr, servaddr;
     int                 ret;
 
@@ -53,7 +44,9 @@ void str_echo(int sockfd){
     char    buf[BUF_SIZE];
 again:
     while((n = read(sockfd, buf, BUF_SIZE)) > 0)
-        
-    
-    
+        writen(sockfd, buf, n);
+    if(n < 0 && errno == EINTR)
+        goto again;
+    else if(n < 0)
+        perror("str_echo: read error.");
 }
