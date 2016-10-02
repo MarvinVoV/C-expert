@@ -4,8 +4,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/types.h>
 
 #define SERV_PORT 8080
+#define BUF_SIZE  2048 * 10
+
+void str_echo(int sockfd);
 
 int main(int argc, char **argv){
     int                 listenfd, connfd;
@@ -29,11 +33,27 @@ int main(int argc, char **argv){
     if(ret != 0)
         perror("listen error\n");
 
+    for(; ;){
+        clilen = sizeof(cliaddr);
+        connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen);
+        if(connfd <= 0)
+            perror("accept error\n");
+        
+        if((childpid = fork()) == 0){ // child process
+            close(listenfd);
+            str_echo(connfd); // process the request
+            exit(0);
+        }
+        close(connfd); // parent closes connected socket
+    }
+}
+
+void str_echo(int sockfd){
+    ssize_t n;
+    char    buf[BUF_SIZE];
+again:
+    while((n = read(sockfd, buf, BUF_SIZE)) > 0)
+        
     
-
-
-
-     
-
     
 }
