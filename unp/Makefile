@@ -41,14 +41,14 @@ PRE:
 	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 	@mkdir $(OBJ_DIR) $(BIN_DIR)
 
-
+# Clean objs and target folder
 .PHONY: cleanlib clean
 cleanlib:
 	@rm -rf $(OBJ_DIR)
 clean:
 	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 	
-
+# Make submakes
 .PHONY: all  $(SUBMKS)
 all: $(SUBMKS)
 $(SUBMKS): | $(LIB_OBJ)
