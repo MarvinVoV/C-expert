@@ -34,7 +34,7 @@ export
 
 # Compile library source files
 $(LIB_OBJ): $(LIB_SRC) | PRE 
-	$(CC) $(CFLAGS) $(I_INC) -c $^ -o $@
+	$(CC) $(CFLAGS) $(I_INC) -c $< -o $@
 
 # Creat objects output folder
 PRE:
