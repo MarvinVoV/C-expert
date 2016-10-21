@@ -4,12 +4,15 @@ INCDIR := $(addprefix -I, ../../header)
 VPATH := ../../header:../../libs
 
 all: echoserver echotcpclient
-echoserver: echoserver.o writen.o 
+echoserver: echoserver.o writen.o signal.o 
 	$(CC) $^ -o $@
 echoserver.o: echoserver.c
 	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
 writen.o: writen.c
 	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
+signal.o: signal.c
+	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
+	
 
 
 echotcpclient: echotcpclient.o writen.o readline.o

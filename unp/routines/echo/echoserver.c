@@ -1,6 +1,7 @@
 #include "unp.h"
 
 void str_echo(int sockfd);
+void sigchld_handler(int signo);
 
 int main(int argc, char **argv){
     int                 listenfd, connfd;
@@ -23,12 +24,21 @@ int main(int argc, char **argv){
     ret = listen(listenfd, 5);
     if(ret != 0)
         perror("listen error\n");
+    
+    /* Install signal handler */
+    signal(SIGCHLD, sigchld_handler);
 
     for(; ;){
         clilen = sizeof(cliaddr);
         connfd = accept(listenfd, (struct sockaddr *) &cliaddr, &clilen);
-        if(connfd <= 0)
-            perror("accept error\n");
+        if(connfd < 0){
+            if(errno == EINTR)
+                continue;   /* back to for() */
+            else{
+                perror("accept error\n");
+                exit(-1);
+            }
+        }
         
         if((childpid = fork()) == 0){ // child process
             close(listenfd);
@@ -49,4 +59,12 @@ again:
         goto again;
     else if(n < 0)
         perror("str_echo: read error.");
+}
+
+void sigchld_handler(int signo){
+    pid_t pid;
+    int stat;
+    pid = wait(&stat);
+    printf("child %d terminated \n", pid);
+    return;
 }
