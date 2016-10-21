@@ -10,6 +10,14 @@ void sig_chld(int signo){
     printf("catch SIGCHLD\n");
 }
 
+void pr_exit(int status){
+    if(WIFEXITED(status))
+        printf("normal termination, exit status = %d\n", WEXITSTATUS(status));
+    else if(WIFSIGNALED(status))
+        printf("abnormal termination, signal number = %d\n", WTERMSIG(status));
+    else if(WIFSTOPPED(status))
+        printf("child stopped, signal number = %d\n", WSTOPSIG(status));
+}
 int main(int argc, char **argv){
     pid_t pid, wpid;
     struct sigaction act, oact;
@@ -33,6 +41,7 @@ int main(int argc, char **argv){
         printf("parent run\n");
         wpid = wait(&stat);
         printf("wpid=%d\n", wpid);
+        pr_exit(stat);
     }
 
     exit(0);
