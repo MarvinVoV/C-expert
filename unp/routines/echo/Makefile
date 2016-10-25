@@ -3,7 +3,7 @@ CFLAGS = -g -Wall
 INCDIR := $(addprefix -I, ../../header)
 VPATH := ../../header:../../libs
 
-all: echoserver echotcpclient
+all: echoserver echotcpclient tcpclient01
 echoserver: echoserver.o writen.o signal.o 
 	$(CC) $^ -o $@
 echoserver.o: echoserver.c
@@ -22,9 +22,19 @@ echotcpclient.o: echotcpclient.c
 readline.o: readline.c
 	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
 
+
+tcpclient01: tcpclient01.o writen.o readline.o
+	$(CC) $^ -o $@
+tcpclient01.o: tcpclient01.c
+	$(CC) $(CLFAGS) $(INCDIR) -c $< -o $@
+readline.o: readline.c
+	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
+
+
+
 .PYONE: clean cleanobjs
 clean:
-	@rm -f *.o echoserver echotcpclient
+	@rm -f *.o echoserver echotcpclient tcpclient01
 
 cleanobjs:
 	@rm -f *.o
