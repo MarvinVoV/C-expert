@@ -2,6 +2,9 @@
 
 void str_cli(FILE *fp, int sockfd);
 
+void str_cli_select01(FILE *fp, int sockfd);
+
+
 int main(int argc, char **argv){
     int                 sockfd;
     struct sockaddr_in  servaddr;
@@ -25,7 +28,8 @@ int main(int argc, char **argv){
         exit(-1);
     }
 
-    str_cli(stdin, sockfd);
+    // str_cli(stdin, sockfd);
+    str_cli_select01(stdin, sockfd);
 
     exit(0);
 }
@@ -43,4 +47,41 @@ void str_cli(FILE *fp, int sockfd){
 
         fputs(recvline, stdout);
     }
+}
+
+
+/**
+ *  Using select function, so we are notified as soon as the server process terminates.
+ */
+void str_cli_select01(FILE *fp, int sockfd){
+   int      maxfdp1;
+   fd_set   rset;
+   char     sendline[BUF_SIZE], recvline[BUF_SIZE];
+   int      retval;
+
+   FD_ZERO(&rset);
+   for ( ; ; ){
+        FD_SET(fileno(fp), &rset);
+        FD_SET(sockfd, &rset);
+        maxfdp1 = max(fileno(fp), sockfd) + 1; // max file descriptor plus 1 
+        retval = select(maxfdp1, &rset, NULL, NULL, NULL);
+        if (retval == -1){
+            perror("select error");
+            exit(-1);
+        }
+
+        if (FD_ISSET(sockfd, &rset)) { // socket is readable
+            if (readline(sockfd, recvline, BUF_SIZE) == 0){
+                perror("str_cli: server terminated prematurely");
+                exit(-1);
+            }
+            fputs(recvline, stdout);
+        }
+        
+        if (FD_ISSET(fileno(fp), &rset)){ // input is readable
+            if (fgets(sendline, BUF_SIZE, fp) == NULL)
+                return; // all done
+            writen(sockfd, sendline, strlen(sendline));
+        }
+   }
 }

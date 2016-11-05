@@ -15,12 +15,18 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <sys/select.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
 
 #define SERV_PORT 8080
 #define BUF_SIZE  2048 * 10
+
+#ifndef max
+    #define max(a,b) ((a > b) ? (a) : (b))
+#endif
 
 typedef void sigfunc(int);
 
