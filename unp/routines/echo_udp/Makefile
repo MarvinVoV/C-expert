@@ -9,11 +9,12 @@ echoserver: echoserver.o
 echoserver.o: echoserver.c
 	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
 	
-echoclient: echoclient.o
+echoclient: echoclient.o sock_ntop.o
 	$(CC) $^ -o $@
 echoclient.o: echoclient.c
 	$(CC) $(CLFAGS) $(INCDIR) -c $< -o $@
-
+sock_ntop.o: sock_ntop.c
+	$(CC) $(CLFAGS) $(INCDIR) -c $< -o $@
 
 
 

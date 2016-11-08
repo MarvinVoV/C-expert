@@ -16,6 +16,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/select.h>
+#include <sys/un.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
@@ -39,6 +40,8 @@ ssize_t readline(int fd, void *buf, size_t maxlen);
 
 
 sigfunc *signal(int signo, sigfunc *func);
+
+char *sock_ntop(const struct sockaddr *sa, socklen_t len);
 
 
 
