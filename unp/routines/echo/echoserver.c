@@ -9,6 +9,7 @@ int main(int argc, char **argv){
     socklen_t           clilen;
     struct sockaddr_in  cliaddr, servaddr;
     int                 ret;
+    int                 optval;
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     
@@ -16,6 +17,12 @@ int main(int argc, char **argv){
     servaddr.sin_family      = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port        = htons(SERV_PORT);
+    /* set socket options */
+    optval = 1;
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) != 0) {
+        perror("enable SO_REUSEADDR failed.");
+        exit(-1);
+    }
 
     ret = bind(listenfd,(struct sockaddr *) &servaddr, sizeof(servaddr));
     if(ret != 0)
