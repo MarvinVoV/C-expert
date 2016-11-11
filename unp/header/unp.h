@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/un.h>
@@ -43,6 +44,7 @@ sigfunc *signal(int signo, sigfunc *func);
 
 char *sock_ntop(const struct sockaddr *sa, socklen_t len);
 
+struct addrinfo *host_serv(const char *hostname, const char *service, int family, int socktype);
 
 
 #endif /* HEADER_UNP_H_ */
