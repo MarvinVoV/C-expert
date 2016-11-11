@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
+#include <syslog.h>
 
 #define SERV_PORT 8080
 #define BUF_SIZE  2048 * 10
