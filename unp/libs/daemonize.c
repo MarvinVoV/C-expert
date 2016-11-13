@@ -60,7 +60,7 @@ void daemonize(const char *pname) {
      */
     if (rl.rlim_max == RLIM_INFINITY)
         rl.rlim_max = 1024;
-    for (i = 0, i < rl.rlim_max; i++)
+    for (i = 0; i < rl.rlim_max; i++)
         close(i);
    
     /*
