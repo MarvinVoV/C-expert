@@ -48,5 +48,6 @@ char *sock_ntop(const struct sockaddr *sa, socklen_t len);
 
 struct addrinfo *host_serv(const char *hostname, const char *service, int family, int socktype);
 
+void daemonize(const char *pname);
 
 #endif /* HEADER_UNP_H_ */
