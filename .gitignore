@@ -6,3 +6,4 @@ workspace/lnp/.project
 workspace/RemoteSystemsTempFiles/*
 .DS_Store
 ./**/.DS_Store
+.vscode/

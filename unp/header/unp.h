@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/un.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
@@ -47,5 +48,6 @@ char *sock_ntop(const struct sockaddr *sa, socklen_t len);
 
 struct addrinfo *host_serv(const char *hostname, const char *service, int family, int socktype);
 
+void daemonize(const char *pname);
 
 #endif /* HEADER_UNP_H_ */
