@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 	uint8_t src_mac[6], dst_mac[6];
 
-	uint8_t ether_frame[IP_MAXPACKET];
+	uint8_t *ether_frame;
 
 
 
@@ -72,15 +72,13 @@ int main(int argc, char **argv) {
 	memcpy(etherhdr.ether_dhost, dst_mac, ETH_ALEN * sizeof(uint8_t));
 	etherhdr.ether_type = htons(ETHERTYPE_ARP);
 
-	printf("ethernet header length %ld, ETH_HLEN = %d\n", sizeof(etherhdr), ETH_HLEN);
-
+	frame_len = ETH_HLEN + sizeof(arp);
+	printf("frame_len = %ld\n", frame_len);
+	ether_frame = (uint8_t *)malloc(sizeof(uint8_t) * (frame_len));
+	printf("ether_frame length=%ld\n", sizeof(ehter_frame));
 	// Package
 	memcpy(ether_frame, &etherhdr, ETH_HLEN);
 	memcpy(ether_frame + ETH_HLEN, &arp, sizeof(arp));
-
-	frame_len = ETH_HLEN + sizeof(arp);
-
-	printf("ethernet frame lenght = %d\n", frame_len);
 
 	sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (sockfd < 0) {
@@ -102,7 +100,7 @@ int main(int argc, char **argv) {
     	perror ("sendto() failed");
     	exit (EXIT_FAILURE);
   	}
-
+  	free(ehter_frame);
   	close(sockfd);
   	exit(EXIT_SUCCESS);
 }
