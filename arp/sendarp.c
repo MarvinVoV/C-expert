@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
   	}
   	memcpy (device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
   	device.sll_halen = ETH_ALEN;
+  	pirntf("ether_frame length = %d\n", sizeof(ether_frame));
 
   	if (sendto (sockfd, ether_frame, frame_len, 0, (struct sockaddr *) &device, sizeof(device)) <= 0) {
     	perror ("sendto() failed");
