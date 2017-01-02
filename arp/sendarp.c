@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     	perror ("sendto() failed");
     	exit (EXIT_FAILURE);
   	}
-  	free(ehter_frame);
+  	free(ether_frame);
   	close(sockfd);
   	exit(EXIT_SUCCESS);
 }
