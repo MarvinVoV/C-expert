@@ -25,13 +25,17 @@ int main(int argc, char **argv) {
 
 	uint8_t src_mac[6], dst_mac[6];
 
-	getmacaddr(ifname);
+	src_mac = getmacaddr(ifname);
 
-
+	printmacaddr(src_mac);
 
 }
 
-
+/**
+ * Get MAC address
+ * @param  iface interface
+ * @return       mac address
+ */
 uint8_t *getmacaddr(char *iface) {
 	int fd;
 	struct ifreq ifr;
@@ -48,9 +52,14 @@ uint8_t *getmacaddr(char *iface) {
 
 	mac = (uint8_t *) ifr.ifr_hwaddr.sa_data;
 
-	printf("Mac : %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n" , mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	printmacaddr(mac);
 
 	return mac;
+}
+
+
+void printmacaddr(uint8_t *mac) {
+	printf("Mac : %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n" , mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 }
 
 
