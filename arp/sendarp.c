@@ -8,7 +8,7 @@
 #include <netinet/ip.h>			// IP_MAXPACKET (which is 65535)
 #include <sys/ioctl.h>			// ioctl
 #include <sys/socket.h>			// socket()
-#include <net/ethernet.h>		// ETHERTYPE_IP, struct ether_header
+#include <net/ethernet.h>		// struct ether_header,ETHERTYPE_IP,ETHERTYPE_ARP
 #include <net/if.h>				// struct ifreq, IFNAMSIZ, if_nametoindex()
 #include <net/if_arp.h>			// ARPHRD_ETHER
 #include <netpacket/packet.h>	// struct sockaddr_ll
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 	// Set Ethernet header
 	memcpy(etherhdr.ether_shost, src_mac, ETH_ALEN * sizeof(uint8_t));
 	memcpy(etherhdr.ether_dhost, dst_mac, ETH_ALEN * sizeof(uint8_t));
-	etherhdr.ether_type = ETHERTYPE_ARP;
+	etherhdr.ether_type = htons(ETHERTYPE_ARP);
 
 	printf("ethernet header length %ld, ETH_HLEN = %d\n", sizeof(etherhdr), ETH_HLEN);
 
