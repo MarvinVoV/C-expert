@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 	strcpy(src_ip, "172.16.200.128");
 
 	// Set target IP
-	strcpy(dst_ip, "192.168.3.4");
+	strcpy(dst_ip, "172.16.200.2");
 
 	// Set source mac address
 	getmacaddr(ifname, src_mac);
