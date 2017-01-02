@@ -43,10 +43,10 @@ int main(int argc, char **argv) {
 
 
 	// Set source IP
-	strcpy(src_ip, "172.16.200.128");
+	strcpy(src_ip, "192.168.3.9");
 
 	// Set target IP
-	strcpy(dst_ip, "172.16.200.2");
+	strcpy(dst_ip, "192.168.3.4");
 
 	// Set source mac address
 	getmacaddr(ifname, src_mac);
