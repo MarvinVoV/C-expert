@@ -72,15 +72,15 @@ int main(int argc, char **argv) {
 	memcpy(etherhdr.ether_dhost, dst_mac, ETH_ALEN * sizeof(uint8_t));
 	etherhdr.ether_type = ETHERTYPE_ARP;
 
-	printf("ethernet header length %ld, ETH_HLEN = %d\n", sizeof(ehterhdr), ETH_HLEN);
+	printf("ethernet header length %ld, ETH_HLEN = %d\n", sizeof(etherhdr), ETH_HLEN);
 
 	// Package
-	memcpy(ether_frame, etherhdr, ETH_HLEN);
-	memcpy(ether_frame + ETH_HLEN, &arp, uint8_t * sizeof(arp));
+	memcpy(ether_frame, &etherhdr, ETH_HLEN);
+	memcpy(ether_frame + ETH_HLEN, &arp, sizeof(arp));
 
-	frame_len = ETH_HLEN + uint8_t * sizeof(arp);
+	frame_len = ETH_HLEN + sizeof(arp);
 
-	printf("ethernet frame lenght = %ld\n", frame_len);
+	printf("ethernet frame lenght = %d\n", frame_len);
 
 	sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (sockfd < 0) {
@@ -90,14 +90,14 @@ int main(int argc, char **argv) {
 
 	memset (&device, 0, sizeof (device));
   	device.sll_family = AF_PACKET;
-  	if ((device.sll_ifindex = if_nametoindex (interface)) == 0) {
+  	if ((device.sll_ifindex = if_nametoindex (ifname)) == 0) {
     	perror ("if_nametoindex() failed to obtain interface index ");
     	exit (EXIT_FAILURE);
   	}
   	memcpy (device.sll_addr, src_mac, ETH_ALEN * sizeof (uint8_t));
   	device.sll_halen = ETH_ALEN;
 
-  	if ((bytes = sendto (sockfd, ether_frame, frame_len, 0, (struct sockaddr *) &device, sizeof(device))) <= 0) {
+  	if (sendto (sockfd, ether_frame, frame_len, 0, (struct sockaddr *) &device, sizeof(device)) <= 0) {
     	perror ("sendto() failed");
     	exit (EXIT_FAILURE);
   	}
