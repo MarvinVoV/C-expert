@@ -17,7 +17,7 @@ uint8_t *getmacaddr(char *);
 
 int main(int argc, char **argv) {
 
-	char *interface = "ens33";
+	char *ifname = "ens33";
 
 	struct ether_arp arp;
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
 	uint8_t src_mac[6], dst_mac[6];
 
-	getmacaddr(interface, src_mac);
+	getmacaddr(ifname);
 
 
 
