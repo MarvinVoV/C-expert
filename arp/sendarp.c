@@ -9,7 +9,7 @@
 #include <netinet/ip.h>			// IP_MAXPACKET (which is 65535)
 #include <net/if.h>				// struct ifreq, IFNAMSIZ
 #include <sys/ioctl.h>			// ioctl
-#include <error.h>				// error, perror()
+#include <errno.h>				// error, perror()
 
 
 uint8_t *getmacaddr(char *);
