@@ -12,7 +12,7 @@
 #include <errno.h>				// error, perror()
 
 
-uint8_t *getmacaddr(char *);
+void getmacaddr(char *, uint8_t *);
 
 
 int main(int argc, char **argv) {
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
 	uint8_t src_mac[6], dst_mac[6];
 
-	src_mac = getmacaddr(ifname);
+	getmacaddr(ifname, src_mac);
 
 	printmacaddr(src_mac);
 
@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
 /**
  * Get MAC address
  * @param  iface interface
- * @return       mac address
+ * @param  macaddr
  */
-uint8_t *getmacaddr(char *iface) {
+void getmacaddr(char *iface, uint8_t *macaddr) {
 	int fd;
 	struct ifreq ifr;
 	uint8_t *mac;
@@ -54,7 +54,7 @@ uint8_t *getmacaddr(char *iface) {
 
 	printmacaddr(mac);
 
-	return mac;
+	memcpy(macaddr, mac, sizeof(mac));
 }
 
 
