@@ -73,9 +73,9 @@ int main(int argc, char **argv) {
 	etherhdr.ether_type = htons(ETHERTYPE_ARP);
 
 	frame_len = ETH_HLEN + sizeof(arp);
-	printf("frame_len = %ld\n", frame_len);
+	printf("frame_len = %d\n", frame_len);
 	ether_frame = (uint8_t *)malloc(sizeof(uint8_t) * (frame_len));
-	printf("ether_frame length=%ld\n", sizeof(ehter_frame));
+	printf("ether_frame length=%ld\n", sizeof(ether_frame));
 	// Package
 	memcpy(ether_frame, &etherhdr, ETH_HLEN);
 	memcpy(ether_frame + ETH_HLEN, &arp, sizeof(arp));
