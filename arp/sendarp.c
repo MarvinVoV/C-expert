@@ -23,8 +23,24 @@ int main(int argc, char **argv) {
 
 	uint8_t src_mac[6], dst_mac[6];
 
+	getmacaddr(interface, src_mac);
 
 
+
+}
+
+
+void getmacaddr(char *interface, uint8_t *macaddr) {
+	struct ifaddr *iflist;
+	if (getifaddrs(&iflist) == 0) {
+		for (struct ifaddr *cur = iflist; cur; cur = cur->ifa_next) {
+			if (cur->ifa_addr->sa_family == AF_LINK && cur->ifa_addr) {
+				//struct sockaddr_dl* sdl = (struct sockaddr_dl*)cur->ifa_addr;
+				//uint8_t *ptr = (uint8_t *)LLADDR(sdl);
+				printf("interface = %s\n", cur->ifa_name);
+			}
+		}
+	}
 }
 
 
