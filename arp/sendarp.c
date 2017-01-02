@@ -65,16 +65,22 @@ int main(int argc, char **argv) {
 	memcpy(arp.arp_spa, src_ip, 4 * sizeof(uint8_t));
 	memcpy(arp.arp_tpa, dst_ip, 4 * sizeof(uint8_t));
 
+	printf("arp packet length %ld\n", sizeof(arp));
+
 	// Set Ethernet header
 	memcpy(etherhdr.ether_shost, src_mac, ETH_ALEN * sizeof(uint8_t));
 	memcpy(etherhdr.ether_dhost, dst_mac, ETH_ALEN * sizeof(uint8_t));
 	etherhdr.ether_type = ETHERTYPE_ARP;
+
+	printf("ethernet header length %ld, ETH_HLEN = %d\n", sizeof(ehterhdr), ETH_HLEN);
 
 	// Package
 	memcpy(ether_frame, etherhdr, ETH_HLEN);
 	memcpy(ether_frame + ETH_HLEN, &arp, uint8_t * sizeof(arp));
 
 	frame_len = ETH_HLEN + uint8_t * sizeof(arp);
+
+	printf("ethernet frame lenght = %ld\n", frame_len);
 
 	sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (sockfd < 0) {
