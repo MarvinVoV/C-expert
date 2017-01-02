@@ -14,6 +14,8 @@
 
 void getmacaddr(char *, uint8_t *);
 
+void printmacaddr(uint8_t *);
+
 
 int main(int argc, char **argv) {
 
