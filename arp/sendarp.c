@@ -12,6 +12,7 @@
 #include <net/if.h>				// struct ifreq, IFNAMSIZ, if_nametoindex()
 #include <net/if_arp.h>			// ARPHRD_ETHER
 #include <netpacket/packet.h>	// struct sockaddr_ll
+#include <arpa/inet.h>			// inet_pton
 #include <errno.h>				// error, perror()
 
 
@@ -22,7 +23,7 @@ void printmacaddr(uint8_t *);
 
 int main(int argc, char **argv) {
 
-	char *ifname = "ens33";
+	char *ifname = "wlp5s0";
 
 	char src_ip[INET_ADDRSTRLEN];
 
@@ -34,6 +35,8 @@ int main(int argc, char **argv) {
 
 	struct sockaddr_ll device;
 
+	struct in_addr src_sa, dst_sa;
+
 	int sockfd, frame_len;
 
 	uint8_t src_mac[6], dst_mac[6];
@@ -43,10 +46,12 @@ int main(int argc, char **argv) {
 
 
 	// Set source IP
-	strcpy(src_ip, "192.168.3.9");
+	strcpy(src_ip, "192.168.3.8");
+	inet_pton(AF_INET, src_ip, &src_sa);
 
 	// Set target IP
 	strcpy(dst_ip, "192.168.3.4");
+	inet_pton(AF_INET, dst_ip, &dst_sa);
 
 	// Set source mac address
 	getmacaddr(ifname, src_mac);
@@ -62,8 +67,8 @@ int main(int argc, char **argv) {
 	arp.arp_op = htons(ARPOP_REQUEST);
 	memcpy(arp.arp_sha, src_mac, ETH_ALEN * sizeof(uint8_t));
 	memcpy(arp.arp_tha, dst_mac, ETH_ALEN * sizeof(uint8_t));
-	memcpy(arp.arp_spa, src_ip, 4 * sizeof(uint8_t));
-	memcpy(arp.arp_tpa, dst_ip, 4 * sizeof(uint8_t));
+	memcpy(arp.arp_spa, &src_sa, 4 * sizeof(uint8_t));
+	memcpy(arp.arp_tpa, &dst_sa, 4 * sizeof(uint8_t));
 
 	printf("arp packet length %ld\n", sizeof(arp));
 
