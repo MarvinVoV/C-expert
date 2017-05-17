@@ -1,0 +1,47 @@
+#!/bin/sh
+
+LOG_DIR="/home/admin/logs/mappprod/"
+LOG_FILE_NAME="mappprod-rpc-monitor"
+LOG_SUFFIX="*.log"
+VERBOSE=0
+
+usage() {
+    echo "Usage: $0 [-a|-b] [-v] content ..."
+}
+
+while getopts "abv" opt; do
+    case $opt in
+        a) LOG_SUFFIX="*.log*"
+        ;;
+        b) LOG_SUFFIX="*.log.*"
+        ;;
+        v) VERBOSE=1
+        ;;
+        \?)
+            usage
+            exit 1
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
+if [ -z "$1" ]; then
+    usage
+fi
+
+target_log="${LOG_DIR}${LOG_FILE_NAME}${LOG_SUFFIX}"
+index=1
+cmd="pgm mappprodserver '"
+for var in "$@"; do
+    if [ $index == 1 ]; then
+        cmd="${cmd}grep \"$var\" $target_log"
+    else
+        cmd="${cmd} | grep \"$var\""
+    fi
+    ((++index))
+done
+cmd="$cmd'"
+if [ $VERBOSE == 1 ]; then
+    echo "debug: $cmd"
+fi
+
+sh -c "$cmd"
