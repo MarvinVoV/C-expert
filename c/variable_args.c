@@ -1,16 +1,17 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
-void print_ints(int args, ...){
+void print_args(int argc, ...) {
     va_list ap;
-    va_start(ap, args);
-    for(int i = 0; i < args; i++){
-        printf("argument: %i\n", va_arg(ap, int));
+    va_start(ap, argc);
+    for (int i = 0; i < argc; i++) {
+        printf("%d\n", va_arg(ap, int));
     }
     va_end(ap);
 }
 
-int main(void){
-    print_ints(3, 79, 101, 32);
+int main(void) {
+    print_args(3, 1, 20, 32); 
     return 0;
 }

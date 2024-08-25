@@ -1,13 +1,12 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-int main(int argc, char *argv[]){
-	printf("arguments number is %d\n", argc);
-	printf("program name is %s\n", argv[0]);
-
-	printf("print all the arguments\n");
-	for(int i = 0; i < argc; i++)
-		printf("arg[%d] %s\n", i, argv[i]);	
-
-	return 0;
+/**
+ *  默认第一个参数是当前文件名
+ */
+int main(int argc, char *argv[]) {
+    printf("argc = %d\n", argc);
+    for (int i = 0; i < argc; i++) {
+        printf("argv[%d] = %s\n", i, argv[i]);
+    }
+    return 0;
 }
