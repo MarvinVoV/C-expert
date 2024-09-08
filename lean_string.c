@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <string.h>
 
 int main() {
 
@@ -13,6 +14,7 @@ int main() {
     // Using pointer
     char *str = "Hello, World!";
     printf("%s\n",str);
+    printf("str len=%ld\n",strlen(str));
 
 
     // 先取str的值，然后递增指针
@@ -22,5 +24,6 @@ int main() {
 
     char r = *--str;
     printf("%c,%s\n",r, str);
+
     return 0;
 }
